@@ -1,0 +1,39 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Login to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build and push
+        env:
+          ECR_REGISTRY: ${{ steps.ecr.outputs.registry }}
+          IMAGE: clinical-rag
+        run: |
+          docker build -t $ECR_REGISTRY/$IMAGE:${{ github.sha }} -t $ECR_REGISTRY/$IMAGE:latest .
+          docker push $ECR_REGISTRY/$IMAGE:${{ github.sha }}
+          docker push $ECR_REGISTRY/$IMAGE:latest
+      - name: Deploy ECS
+        run: |
+          aws ecs update-service \
+            --cluster clinical-rag-prod \
+            --service clinical-rag-api \
+            --force-new-deployment

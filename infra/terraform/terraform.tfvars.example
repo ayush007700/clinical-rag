@@ -1,0 +1,12 @@
+aws_region   = "us-east-1"
+project      = "clinical-rag"
+environment  = "prod"
+desired_count = 2
+
+# Fill before terraform apply:
+# openai_api_key  = "sk-..."
+# neo4j_uri       = "neo4j+s://xxxx.databases.neo4j.io"
+# neo4j_password  = "..."
+# database_url    = "postgresql+psycopg2://user:pass@aurora-endpoint:5432/clinical_fhir"
+# jwt_secret      = "long-random-string"
+# container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/clinical-rag:latest"

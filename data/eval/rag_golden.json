@@ -1,0 +1,35 @@
+{
+  "description": "Tiny GraphRAG golden set for ClinicalRAG (run after scripts/seed_demo.py).",
+  "cases": [
+    {
+      "id": "demo_patient_pneumonia",
+      "patient_id": "Patient/demo-001",
+      "mode": "patient",
+      "query": "Generate clinician patient summary",
+      "must_retrieve_terms": ["pneumonia", "hypoxia"],
+      "must_answer_terms": ["pneumonia"],
+      "require_citations": true,
+      "min_retrieval_term_recall": 0.5,
+      "min_answer_term_coverage": 0.5
+    },
+    {
+      "id": "demo_insurance_copd",
+      "patient_id": "Patient/demo-001",
+      "mode": "insurance",
+      "encounter_id": "Encounter/enc-001",
+      "query": "Generate insurance claim clinical summary",
+      "must_retrieve_terms": ["copd", "pneumonia"],
+      "must_answer_terms": ["drg"],
+      "require_citations": true,
+      "min_retrieval_term_recall": 0.5,
+      "min_answer_term_coverage": 0.5
+    },
+    {
+      "id": "unknown_patient_refuse",
+      "patient_id": "Patient/does-not-exist",
+      "mode": "patient",
+      "query": "Generate clinician patient summary",
+      "expect_refuse": true
+    }
+  ]
+}
